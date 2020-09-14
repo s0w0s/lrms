@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.ac.sunmoon.lrms.record.RecordMapper">
+	<select id="selectRecordAll" parameterType="kr.ac.sunmoon.lrms.reservation.Reservation" resultType="kr.ac.sunmoon.lrms.reservation.Reservation">
+    SELECT 
+            NO
+            ,LAB_NO
+            ,MANAGER_ID
+            ,START_DATE
+            ,EXPIRY_DATE
+            ,REGISTRATION_DATE
+            ,STATE
+    FROM RESERVATION
+    WHERE LAB_NO = #{labNo}
+    <choose>
+		<when test="state == 'all'">
+				ORDER BY START_DATE DESC
+		</when>
+        <otherwise>
+        	 	AND STATE = #{state} ORDER BY START_DATE DESC
+        </otherwise>
+        </choose>	  
+	</select>
+</mapper>

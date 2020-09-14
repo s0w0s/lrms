@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.ac.sunmoon.lrms.reservation.ReservationMapper">
+
+	<select id="selectReservationNo" resultType="int">
+		SELECT RESERVATION_NO_SEQ.CURRVAL FROM DUAL
+	</select>
+
+	<select id="selectAllReservation"  resultType="kr.ac.sunmoon.lrms.reservation.Reservation" parameterType="kr.ac.sunmoon.lrms.reservation.Reservation">
+		SELECT 
+    		ROWNUM
+    		,NO
+    		,LAB_NO
+    		,TO_CHAR(START_DATE,'YYYY-MM-DD HH24:MI') AS startDate
+    		,TO_CHAR(EXPIRY_DATE,'YYYY-MM-DD HH24:MI') AS expiryDate
+   		    ,NOTE
+   		    ,STATE
+		FROM ( SELECT NO,LAB_NO,START_DATE,EXPIRY_DATE,NOTE,PLEDGE,STATE 
+          		FROM RESERVATION WHERE START_DATE >= SYSDATE
+          		) 
+        <choose>
+        	<when test="startcalender=='' ">
+				WHERE LAB_NO = #{labNo} AND STATE='A' 
+        	</when>
+        	<otherwise>
+        		WHERE LAB_NO = #{labNo} AND START_DATE BETWEEN TO_DATE(#{startcalender},'YYYY-MM-DD') AND TO_DATE(#{startcalender},'YYYY-MM-DD')+0.99999 AND STATE='A'
+        	</otherwise>
+        </choose>	        	 
+     	ORDER BY ROWNUM
+	</select>
+	
+	<select id="selectReservation" parameterType="int" resultType="kr.ac.sunmoon.lrms.reservation.Reservation">
+		SELECT      
+             NO
+			,LAB_NO
+			,NAME
+			,TO_CHAR(START_DATE,'YYYY-MM-DD HH24:MI') AS startDate
+			,TO_CHAR(EXPIRY_DATE,'YYYY-MM-DD HH24:MI') AS expiryDate
+			,REGISTRATION_DATE
+			,NOTE
+			,RESERVATION.STATE AS STATE
+			,PLEDGE 
+	 	FROM RESERVATION, MANAGER 
+		WHERE RESERVATION.MANAGER_ID = MANAGER.ID AND NO=#{no}
+	</select>
+	
+	<select id="selectResevationTime" parameterType="kr.ac.sunmoon.lrms.reservation.Reservation" resultType="int">
+		select count(*) 
+			from reservation
+			where lab_no = #{labNo} 
+			and start_date &lt; to_date(#{expiryDate},'yyyymmddhh24mi') 
+			and expiry_date &gt; to_date(#{startDate},'yyyymmddhh24mi')
+			and no != #{no} and state='A'
+	</select>
+	
+	<insert id="insertReservation" parameterType="kr.ac.sunmoon.lrms.reservation.Reservation">
+		INSERT INTO RESERVATION 
+			VALUES(RESERVATION_NO_SEQ.NEXTVAL
+					,#{labNo}
+					,#{managerId}
+					,TO_DATE(#{startDate},'yyyymmddhh24mi')
+					,TO_DATE(#{expiryDate},'yyyymmddhh24mi')
+					,SYSDATE
+					,#{note}
+					,'A'
+					,#{pledge}
+					)	
+	</insert>
+	
+	<update id="updateReservation" parameterType="kr.ac.sunmoon.lrms.reservation.Reservation">
+		UPDATE RESERVATION 
+		   SET 
+				 LAB_NO = #{labNo}
+				,START_DATE = to_date(#{startDate},'yyyymmddhh24mi')
+				,EXPIRY_DATE = to_date(#{expiryDate},'yyyymmddhh24mi')
+				,NOTE = #{note}
+				,PLEDGE = #{pledge}
+				WHERE NO = #{no}
+				
+	</update>
+	
+	<update id="deleteReservation" parameterType="int">
+		UPDATE RESERVATION
+		   SET STATE='C'
+         WHERE NO =#{no}
+	</update>
+	
+</mapper>

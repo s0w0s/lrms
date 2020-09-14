@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.ac.sunmoon.lrms.manager.ManagerMapper">
+    <select id="selectManager" resultType="kr.ac.sunmoon.lrms.manager.Manager">
+       <!-- sql문 작성  -->
+       SELECT  ID
+    		  ,PASSWORD
+    		  ,NAME
+			  ,STATE
+			  ,GRADE
+			  ,EXTENSION_NUMBER
+			  
+       FROM   MANAGER
+       
+       WHERE	ID = #{managerId}
+			  
+    </select>
+    
+    <select id="selectManagerAll" resultType="kr.ac.sunmoon.lrms.manager.Manager">
+    	SELECT ID
+    		  ,PASSWORD
+    		  ,NAME
+    		  ,EXTENSION_NUMBER
+    		  ,GRADE
+    		  ,STATE
+    		  ,ROWNUM
+    		  
+    	FROM   MANAGER
+    	WHERE STATE = 'A'
+    	ORDER BY ROWNUM
+    </select>
+    <select id= "insertManager" parameterType="kr.ac.sunmoon.lrms.manager.Manager">
+    	INSERT INTO
+    		MANAGER
+    		(ID,PASSWORD,EXTENSION_NUMBER,NAME)
+    		VALUES
+    		(#{id},#{password},#{extensionNumber},#{name})
+    </select>
+    <select id="loginChecker" resultType="int" parameterType="String">
+    	SELECT	COUNT(*)
+    	FROM	MANAGER
+    	WHERE	ID = #{managerId} AND PASSWORD = #{password}
+    </select>
+        
+    <select id="duplicationCheck" resultType="int" parameterType="String">
+    	SELECT	COUNT(*)
+    	FROM	MANAGER
+    	WHERE	ID = #{managerId}
+    		
+    </select>
+ 
+    <update id="updateManager" parameterType="kr.ac.sunmoon.lrms.manager.Manager">
+    	UPDATE  MANAGER
+		   SET  PASSWORD = #{password},
+    			NAME = #{name},
+    			EXTENSION_NUMBER = #{extensionNumber}
+		 WHERE  ID = #{id}
+    </update>
+    <update id="deleteManager" parameterType="String">
+    	UPDATE MANAGER
+		SET    STATE = 'C'
+		WHERE  ID = #{managerId}
+    </update>
+
+    
+ </mapper>

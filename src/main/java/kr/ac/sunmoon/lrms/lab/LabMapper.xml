@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.ac.sunmoon.lrms.lab.LabMapper">
+
+	<resultMap type="kr.ac.sunmoon.lrms.lab.Lab" id="selectAllResultMap">
+		<result column="NO" property="no" />
+		<result column="ACCEPTABLE_PERSON" property="acceptablePerson" />
+		<result column="AVAILABLE_EQUIP_NO" property="availableEquipNo" />
+		<result column="COMPUTER_SPEC" property="computerSpec" />
+		<result column="USE_PERPOSE" property="usePerpose" />
+		<result column="STATE" property="state" />
+	</resultMap>
+
+	<select id="selectLabAll" resultMap="selectAllResultMap">
+		select NO
+			, ACCEPTABLE_PERSON
+			, AVAILABLE_EQUIP_NO
+			, COMPUTER_SPEC
+			, USE_PERPOSE
+			, STATE
+		from
+			LAB 
+		ORDER BY 
+			NO
+	</select>
+
+	<resultMap type="kr.ac.sunmoon.lrms.lab.Lab" id="selectResultMap">
+		<result column="NO" property="no" />
+		<result column="ACCEPTABLE_PERSON" property="acceptablePerson" />
+		<result column="AVAILABLE_EQUIP_NO" property="availableEquipNo" />
+		<result column="COMPUTER_SPEC" property="computerSpec" />
+		<result column="USE_PERPOSE" property="usePerpose" />
+		<result column="STATE" property="state" />
+		<result column="LAB_NO" property="labNo" />
+		<result column="PHOTO_NO" property="photoNo" />
+	</resultMap>
+
+	<select id="selectLab" resultMap="selectResultMap" parameterType="int">
+		SELECT NO
+			, ACCEPTABLE_PERSON
+			, AVAILABLE_EQUIP_NO
+			, COMPUTER_SPEC
+			, USE_PERPOSE
+			, STATE
+		FROM
+			LAB
+		<if test="labNo > 0">
+			where NO = #{labNo} 
+		</if>
+	</select>
+
+	<insert id="insertLab" parameterType="kr.ac.sunmoon.lrms.lab.Lab">
+		INSERT INTO LAB 
+		(NO, ACCEPTABLE_PERSON, AVAILABLE_EQUIP_NO, COMPUTER_SPEC, USE_PERPOSE, STATE)
+		VALUES (#{no}, #{acceptablePerson}, #{availableEquipNo}, #{computerSpec}, #{usePerpose}, #{state})
+	</insert>
+	
+	<!-- 실습실 수정  -->
+	<update id="updateLab" parameterType="kr.ac.sunmoon.lrms.lab.Lab">
+		UPDATE LAB 
+		<set>
+			<if test="acceptablePerson != null"> ACCEPTABLE_PERSON = #{acceptablePerson}, </if>
+			<if test="computerSpec != null"> COMPUTER_SPEC = #{computerSpec}, </if>
+			<if test="availableEquipNo != null ">AVAILABLE_EQUIP_NO = #{availableEquipNo}, </if>
+			<if test="usePerpose != null "> USE_PERPOSE = #{usePerpose}, </if>
+			<if test="state != null "> STATE = #{state}, </if>
+		</set>
+		WHERE NO = #{no}	
+	</update>
+	
+	<!-- 실습실 삭제 -->
+	<update id="deleteLab" parameterType="int">
+		UPDATE LAB
+		SET STATE = 'C'
+		<if test="labNo > 0">
+			WHERE NO = #{labNo} 
+		</if>
+	</update>
+</mapper>

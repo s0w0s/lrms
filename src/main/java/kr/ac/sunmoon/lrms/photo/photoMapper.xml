@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.ac.sunmoon.lrms.photo.PhotoMapper">
+
+	<resultMap type="kr.ac.sunmoon.lrms.photo.Photo"
+		id="selectPhotoResultMap">
+		<result column="NO" property="no" />
+		<result column="LAB_NO" property="labNo" />
+		<result column="PATH" property="path" />
+		<result column="PHYSICAL_FILE_NAME" property="physicalFileName" />
+		<result column="LOGICAL_FILE_NAME" property="logicalFileName" />
+	</resultMap>
+
+	<select id="selectPhoto" parameterType="java.lang.String"
+		resultMap="selectPhotoResultMap">
+		SELECT NO
+		, LAB_NO
+		, PATH
+		, PHYSICAL_FILE_NAME
+		, LOGICAL_FILE_NAME
+		FROM
+		PHOTO
+		<where>
+			<if test="no != null"> NO = #{no} </if>
+		</where>
+	</select>
+
+	<insert id="insertPhoto"
+		parameterType="kr.ac.sunmoon.lrms.photo.Photo">
+		INSERT INTO PHOTO (NO, LAB_NO, PATH, PHYSICAL_FILE_NAME,
+		LOGICAL_FILE_NAME)
+		values(#{no}, #{labNo}, #{path},
+		#{physicalFileName}, #{logicalFileName})
+	</insert>
+
+	<update id="updatePhoto"
+		parameterType="kr.ac.sunmoon.lrms.photo.Photo">
+		UPDATE PHOTO
+		<set>
+			<if test="path != null">PATH = #{path},</if>
+			<if test="labNo != null">LAB_NO = #{labNo}, </if>
+			<if test="physicalFileName != null">PHYSICAL_FILE_NAME = #{physicalFileName},</if>
+			<if test="logicalFileName != null">LOGICAL_FILE_NAME = #{logicalFileName},</if>
+		</set>
+		<where>
+			<if test="no != null"> NO = #{no} </if>
+		</where>
+	</update>
+
+	<delete id="deletePhoto" parameterType="java.lang.String">
+		DELETE FROM PHOTO
+		<where>
+			<if test="no != null"> NO = #{no} </if>
+		</where>
+	</delete>
+</mapper>
